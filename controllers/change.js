@@ -2,17 +2,24 @@ const mysql = require('mysql');
 const jwt = require("jsonwebtoken")
 const bcrypt = require("bcryptjs")
 
+const db = mysql.createConnection({
+    host: process.env.DATABASE_HOST,
+    user: process.env.DATABASE_USER,
+    password: process.env.DATABASE_PASSWORD,
+    database: process.env.DATABASE
+});
 console.log("0")
 
 
 exports.change = async (req, res) => {
+    
   console.log("1");
-
   const { change_username, change_password } = req.body;
 
   if (change_username === '' && change_password === '') {
       // Her ikisi de boşsa, işlem yapma
       console.log('Kullanıcı adı ve şifre boş, güncelleme yapılmadı.');
+      
   } else if (change_username === '') {
       // Kullanıcı adı boşsa, sadece şifreyi güncelle
       let hashedPassword = await bcrypt.hash(change_password, 8);
@@ -20,6 +27,7 @@ exports.change = async (req, res) => {
 
       const sql = 'UPDATE users SET password = ? WHERE email = ?';
       db.query(sql, [hashedPassword, global.now_email], (err, result) => {
+          
           if (err) {
               console.log(err);
           }
@@ -31,6 +39,8 @@ exports.change = async (req, res) => {
 
       const sql = 'UPDATE users SET username = ? WHERE email = ?';
       db.query(sql, [change_username, global.now_email], (err, result) => {
+        console.log("123456")
+        console.log(global.now_email)
           if (err) {
               console.log(err);
           }

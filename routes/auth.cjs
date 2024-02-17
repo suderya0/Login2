@@ -5,6 +5,9 @@ const authLoginController = require("../controllers/authLogin")
 const changeController = require("../controllers/change")
 const forgetController = require("../controllers/forget")
 const enterCodeController = require("../controllers/enterCode")
+const getInterestController = require("../controllers/interest")
+const mapController = require("../controllers/map")
+
 
 
 
@@ -21,5 +24,10 @@ router.post('/change', changeController.change);
 router.post("/forget", forgetController.forget);
 
 router.post("/code", enterCodeController.code);
+
+router.post("/interest", getInterestController.interest)
+
+
+
 
 module.exports = router;

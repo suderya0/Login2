@@ -14,6 +14,8 @@ const GoogleStrategy = require('passport-google-oauth20').Strategy;
 
 
 dotenv.config({ path: "./.env"});
+// Örnek:
+app.set('views', path.join(__dirname, '/public/views'));
 
 
 
@@ -30,9 +32,13 @@ db.connect((err) => {
     }
     console.log('MySQL connected2');
 });
+app.use(session({
+    secret: '12345', // Güvenli bir anahtar belirleyin
+    resave: false,
+    saveUninitialized: true
+}));
 
-
-const publicDirectory = path.join(__dirname, "./public");
+const publicDirectory = path.join(__dirname, "/public");
 app.use(express.static(publicDirectory));
 
 app.use(express.urlencoded({ extended: false }));
@@ -54,8 +60,21 @@ passport.deserializeUser(function (obj, cb){
     cb(null, obj)
 });
 
+app.get('/auth/google',
+  passport.authenticate('google', { scope: 'email' })
+);
 
+passport.use(new Strategy({
+    clientID: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    callbackURL: "http://localhost:3000/auth/google/callback"
+},
 function(accessToken, refreshToken, profile,done){
+    global.userEmail = profile.emails ? profile.emails[0].value : null;
+    // console.log(profile)
+    // console.log("User Email:", userEmail); 
+    // console.log(profile.emails[0].value)
+
       done(null, {})
 }
 )) 
@@ -65,16 +84,26 @@ app.set('view engine', 'hbs');
 
 
 app.get('/auth/google', passport.authenticate("google",{scope: ["profile"]}))
-
-
-app.get('/auth/google/callback', 
+  
+  app.get('/auth/google/callback', 
   passport.authenticate('google', { failureRedirect: '/login' }),
   function(req, res) {
-    // Successful authentication, redirect home.
-    res.render("homepage", {
-    });
-  });
+    const email = userEmail; // Email'i buradan alıyoruz
+    global.now_email = userEmail;
 
+    const sql = "SELECT * FROM users WHERE email = ?;";
+    db.query(sql, [email], (err, result) => {
+
+      // if (result[0] === undefined) {
+
+      //   return res.render("index", {        
+      //       message: "Email does not exist in Database"
+      //   });
+      // } else {
+        res.render("homepage", {});
+    //   }
+    // });
+    })});
 
 
 app.use("/", require("./routes/pages.cjs"));

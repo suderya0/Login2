@@ -1,0 +1,64 @@
+<!-- profile.hbs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/style.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center; /* Align items at the top */
+            height: 100vh;
+            flex-direction: column; /* Align items in a column */
+        }
+        a {
+            display: inline-block;
+            padding: 10px 20px;
+            text-decoration: none;
+            color: #fff;
+            background-color: #007bff;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+            margin-bottom: 10px; /* Add space between buttons */
+        }
+        a:hover {
+            background-color: #0056b3;
+        }
+        /* Interest label rengi ve boyutu */
+        label[for="interest"] {
+            color: #fff;
+            font-size: 50px; /* Özel boyut, istediğiniz değeri kullanabilirsiniz */
+        }
+        #username {
+            color: #fff;
+            font-size: 36px; /* Increased font size */
+            margin-bottom: 10px;
+            text-align: center; /* Align text at the center */
+        }
+    </style>
+    <title>Profile</title>
+</head>
+<body>
+    <a href="/change">Change Information</a>
+    
+    <!-- Display user data -->
+    {{#each userData}}
+        <p id="username">Welcome, {{this.username}}!</p>
+        <p id="username">Email: {{this.email}}</p>
+        <p id="username">Interest: {{this.interest}}</p>
+    {{/each}}
+
+    <form action="/auth/interest" method="POST">
+        <div class="mb-3">
+            <label for="interest" class="form-label">İnterest</label>
+            <input type="text" class="form-control" id="interest" name="interest">
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Save</button>
+    </form>
+</body>
+</html>
